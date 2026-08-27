@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAV3N's Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Enhanced Navigation Header -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="brand-logo">RAV3N</a>
+
+            <!-- Center Quick Navigation / Hub Links -->
+            <div class="nav-center-links">
+                <a href="index.html" class="active-nav">Insights</a>
+                <a href="#articles-container">Library</a>
+                <a href="#footer">About & Contact</a>
+            </div>
+
+            <!-- Right Action Links -->
+            <div class="nav-links">
+                <a href="https://x.com/rav3nwrites" target="_blank">Twitter</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl">
+        <header>
+            <h1>Insights & Strategy.</h1>
+            <p>High-level technical breakdowns, protocol architecture, and digital growth systems.</p>
+        </header>
+
+        <!-- Category Filters -->
+        <div class="category-filters">
+            <button onclick="filterCategory('All', event)" class="category-btn active">All Articles</button>
+            <button onclick="filterCategory('Cybersecurity', event)" class="category-btn">Cybersecurity</button>
+            <button onclick="filterCategory('Web3', event)" class="category-btn">Web3</button>
+            <button onclick="filterCategory('Crypto', event)" class="category-btn">Crypto</button>
+            <button onclick="filterCategory('NFTs', event)" class="category-btn">NFTs</button>
+        </div>
+
+        <!-- Articles Container -->
+        <div id="articles-container">
+            <!-- Dynamic Articles Load Here -->
+        </div>
+    </main>
+
+    <!-- Professional Footer -->
+    <footer id="footer">
+        <div class="footer-container">
+            <div>
+                <p class="footer-brand">RAV3N</p>
+                <p class="footer-copy">Curated and authored by Raven.</p>
+            </div>
+            <div class="footer-socials">
+                <a href="https://x.com/rav3nwrites" target="_blank">Twitter / X</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Data and Filtering Logic -->
+    <script>
+        const articles = [
+            {
+                id: "advanced-network-reconnaissance",
+                category: "Cybersecurity",
+                title: "Advanced Network Reconnaissance & Port Scanning Mechanics",
+                summary: "An analytical breakdown of TCP handshaking behaviors, stealth SYN scans, and firewall evasion techniques."
+            },
+            {
+                id: "incident-response-playbook",
+                category: "Cybersecurity",
+                title: "Building an Enterprise Incident Response Playbook",
+                summary: "Step-by-step containment strategies, log forensics, and malware isolation protocols for security teams."
+            },
+            {
+                id: "modular-blockchain-architecture",
+                category: "Web3",
+                title: "The Shift from Monolithic to Modular Blockchain Architecture",
+                summary: "Separating consensus, execution, and data availability layers to optimize throughput and scale infrastructure."
+            },
+            {
+                id: "zero-knowledge-rollups",
+                category: "Web3",
+                title: "Scaling Layer 2: The Mathematical Reality of Zero-Knowledge Rollups",
+                summary: "How validity proofs eliminate trusted sequencers and secure decentralized state transitions cryptographically."
+            },
+            {
+                id: "liquidity-market-makers",
+                category: "Crypto",
+                title: "Automated Market Maker Dynamics and Impermanent Loss Mechanics",
+                summary: "Mathematical models governing constant product pools and hedging strategies for liquidity providers."
+            },
+            {
+                id: "cross-chain-bridges",
+                category: "Crypto",
+                title: "Security Vectors in Cross-Chain Bridge Protocols",
+                summary: "Analyzing validator lock-and-mint models versus trustless light-client verification mechanisms."
+            },
+            {
+                id: "smart-contract-nft-standards",
+                category: "NFTs",
+                title: "Dynamic On-Chain Metadata and Generative Token Standards",
+                summary: "Moving away from IPFS storage toward fully autonomous, decentralized smart contract rendering engines."
+            }
+        ];
+
+        function renderArticles(filter = 'All') {
+            const container = document.getElementById("articles-container");
+            container.innerHTML = "";
+
+            const filtered = filter === 'All' ? articles : articles.filter(a => a.category === filter);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem; padding: 2rem 0;">No articles found in this category yet.</p>`;
+                return;
+            }
+
+            filtered.forEach(art => {
+                container.innerHTML += `
+                    <a href="post.html?id=${art.id}" class="article-card">
+                        <div>
+                            <div class="card-meta">
+                                <span class="card-tag">${art.category}</span>
+                            </div>
+                            <h2>${art.title}</h2>
+                            <p>${art.summary}</p>
+                        </div>
+                    </a>
+                `;
+            });
+        }
+
+        function filterCategory(category, event) {
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            renderArticles(category);
+        }
+
+        renderArticles('All');
+    </script>
+</body>
+
+</html>

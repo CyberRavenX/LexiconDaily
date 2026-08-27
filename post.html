@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Navigation Header -->
+    <nav>
+        <div class="nav-container" style="max-width: 48rem;">
+            <a href="index.html" class="brand-logo"
+                style="font-size: 0.9rem; font-family: monospace; color: var(--accent-cyan);">← Back to Articles</a>
+            <span id="post-category" class="card-tag"></span>
+        </div>
+    </nav>
+
+    <!-- Article Content Wrapper -->
+    <main class="max-w-4xl" style="max-width: 48rem;">
+        <article>
+            <span id="post-date" class="card-date" style="display: block; margin-bottom: 0.75rem;"></span>
+            <h1 id="post-title" style="font-size: 2.25rem; font-weight: 800; line-height: 1.3; margin-bottom: 2rem;">
+            </h1>
+            <div id="post-content"></div>
+        </article>
+    </main>
+
+    <!-- Professional Footer -->
+    <footer id="footer">
+        <div class="footer-container" style="max-width: 48rem;">
+            <div>
+                <p class="footer-brand">RAV3N</p>
+                <p class="footer-copy">Curated and authored by Linus.</p>
+            </div>
+            <div class="footer-socials">
+                <a href="https://x.com/rav3nwrites" target="_blank">Twitter / X</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Article Database and Loader Script -->
+    <script>
+        const database = {
+            "advanced-network-reconnaissance": {
+                category: "Cybersecurity",
+                date: "August 2026",
+                title: "Advanced Network Reconnaissance & Port Scanning Mechanics",
+                content: `
+                    <h3>The Principle of Active Mapping</h3>
+                    <p>Before any penetration testing engagement or defensive audit occurs, precise network mapping is mandatory. Standard ping utilities are often blocked by modern firewalls, requiring analysts to drop down to raw socket programming and custom packet manipulation.</p>
+                    <ul>
+                        <li><strong>SYN Stealth Scanning:</strong> By sending half-open synchronization packets without completing the three-way handshake, scanners can map open ports while leaving minimal traces in standard system logs.</li>
+                        <li><strong>OS Fingerprinting:</strong> Analyzing TCP window sizes, time-to-live (TTL) variations, and sequence predictability flags to identify remote operating systems accurately.</li>
+                    </ul>
+                    <h3>Defensive Countermeasures</h3>
+                    <p>Networks must deploy stateful inspection firewalls, rate-limiting rules, and automated intrusion detection systems (IDS) like Snort or Suricata to flag anomalous packet bursts instantly.</p>
+                `
+            },
+            "incident-response-playbook": {
+                category: "Cybersecurity",
+                date: "August 2026",
+                title: "Building an Enterprise Incident Response Playbook",
+                content: `
+        <h3>Phase 1: Preparation and Scoping</h3>
+        <p>An effective incident response playbook begins long before an alert triggers. Organizations must map their critical assets, establish clear lines of communication, and ensure logging mechanisms are active across all network perimeters.</p>
+        <ul>
+            <li><strong>Asset Discovery:</strong> Continuously maintain an inventory of internal endpoints, cloud buckets, and external-facing web servers.</li>
+            <li><strong>Tooling Readiness:</strong> Pre-configure endpoint detection and response (EDR) agents and log aggregation pipelines.</li>
+        </ul>
+
+        <h3>Phase 2: Detection and Analysis</h3>
+        <p>When anomalies occur, triage is critical. Security analysts must rapidly differentiate between false positives and genuine indicators of compromise (IoCs).</p>
+        <p>Isolate affected hosts immediately to prevent lateral movement through internal VLANs while preserving volatile RAM memory for post-incident digital forensics.</p>
+
+        <h3>Phase 3: Containment, Eradication, and Recovery</h3>
+        <p>Once the threat vector is identified, execute short-term containment (network disconnection) followed by long-term eradication (patching vulnerabilities, resetting compromised credentials, and redeploying clean system images).</p>
+    `
+            },
+            "zero-knowledge-rollups": {
+                category: "Web3",
+                date: "August 2026",
+                title: "Scaling Layer 2: The Mathematical Reality of Zero Knowledge Rollups",
+                content: `
+                    <h3>The Scalability Bottleneck</h3>
+                    <p>Monolithic base layers struggle with throughput limits because every full node must re-execute every transaction. Zero-knowledge rollups solve this by offloading computation while preserving Layer 1 security guarantees.</p>
+                    <ul>
+                        <li><strong>Validity Proofs vs Fraud Proofs:</strong> ZK rollups use mathematical validity proofs (like zk-SNARKs or STARKs) to prove state validity upfront, whereas optimistic rollups assume transactions are valid unless challenged.</li>
+                        <li><strong>Data Availability:</strong> Even though execution happens off-chain, transaction data must be published or made accessible to ensure censorship resistance.</li>
+                    </ul>
+                `
+            },
+            "modular-blockchain-architecture": {
+                category: "Web3",
+                date: "August 2026",
+                title: "The Shift from Monolithic to Modular Blockchain Architecture",
+                content: `
+        <h3>The Paradigm Shift: From Monolithic to Modular Infrastructure</h3>
+        <p>For the first decade of blockchain engineering, networks operated under a strict monolithic model. Chains like early Ethereum, Bitcoin, and Solana bundled every core blockchain function into a single, tightly coupled layer.</p>
+        <p>To understand why the industry is aggressively pivoting toward modularity, we first need to break down the four foundational pillars of any blockchain, how monolithic systems bottleneck them, and how modular networks decouple them for infinite scalability.</p>
+
+        <h3>1. The Four Pillars of Blockchain Execution</h3>
+        <p>Every single blockchain must perform four core functions simultaneously:</p>
+        <ul>
+            <li><strong>Execution:</strong> Processing transactions and computing state changes (e.g., smart contract logic and updating balances).</li>
+            <li><strong>Settlement:</strong> Finalizing transactions, resolving disputes, and providing ultimate cryptographic proof of state validity.</li>
+            <li><strong>Consensus:</strong> Agreeing on the chronological ordering of transactions within the network.</li>
+            <li><strong>Data Availability (DA):</strong> Ensuring that all transaction data is published and accessible so anyone can verify the state independently.</li>
+        </ul>
+        <p><em>The Monolithic Bottleneck:</em> In a monolithic design, every single full node must download raw data, achieve consensus, execute contracts, and store the global state. This forces an inescapable trilemma where scaling block size sacrifices decentralization.</p>
+
+        <h3>2. The Modular Solution: Separation of Concerns</h3>
+        <p>Modular architecture breaks the monolithic stack apart, distributing responsibilities across specialized, interoperable layers:</p>
+        <ul>
+            <li><strong>Execution Layers (Rollups / App-chains):</strong> Optimized purely for compute and high-speed transaction execution, passing state down to DA layers.</li>
+            <li><strong>Data Availability Layers (e.g., Celestia):</strong> Dedicated strictly to guaranteeing that transaction data is published and accessible without worrying about app logic.</li>
+            <li><strong>Consensus & Settlement Layers:</strong> The heavy-anchor security layer acting as the ultimate root of trust.</li>
+        </ul>
+
+        <h3>3. Key Architectural Advantages</h3>
+        <ul>
+            <li><strong>Customizable Execution Environments:</strong> Developers are no longer bound by a base layer's virtual machine—deploying custom EVM, SVM, or WebAssembly execution layers.</li>
+            <li><strong>Decoupled Scaling:</strong> Throughput scales horizontally through multiple independent rollups while leveraging a unified, secure data availability layer.</li>
+        </ul>
+    `
+            },
+            "liquidity-market-makers": {
+                category: "Crypto",
+                date: "July 2026",
+                title: "Automated Market Maker Dynamics and Impermanent Loss Mechanics",
+                content: `
+                    <h3>Understanding Constant Product Pools</h3>
+                    <p>Decentralized exchanges rely on algorithmic liquidity curves rather than traditional order books. The core formula governing asset pricing depends directly on pool balances.</p>
+                    <p>When external market prices diverge from the internal pool ratio, arbitrageurs step in to rebalance the pool, exposing passive liquidity providers to impermanent loss relative to simply holding the assets.</p>
+                `
+            },
+            "smart-contract-nft-standards": {
+                category: "NFTs",
+                date: "July 2026",
+                title: "Dynamic On-Chain Metadata and Generative Token Standards",
+                content: `
+                    <h3>Beyond Static IPFS Links</h3>
+                    <p>Traditional non-fungible tokens store static image links on external storage networks like IPFS or centralized servers. Modern architecture embeds SVG generation logic directly inside Solidity smart contracts.</p>
+                    <p>This ensures true permanence: the asset lives completely on-chain, rendering its visual data programmatically based on token IDs or contract states without relying on external web infrastructure.</p>
+                `
+            }
+        };
+
+        const params = new URLSearchParams(window.location.search);
+        const postId = params.get("id");
+        const post = database[postId];
+
+        if (post) {
+            document.getElementById("post-category").innerText = post.category;
+            document.getElementById("post-date").innerText = post.date;
+            document.getElementById("post-title").innerText = post.title;
+            document.getElementById("post-content").innerHTML = post.content;
+            document.title = post.title + " // RAV3N";
+        } else {
+            document.getElementById("post-content").innerHTML = "<p style='color: #f87171;'>Article not found or invalid ID.</p>";
+        }
+    </script>
+</body>
+
+</html>
