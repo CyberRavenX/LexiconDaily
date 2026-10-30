@@ -8,10 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        /* Custom scrollbar for sleek look */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #09090b; }
         ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .animate-spin-custom { animation: spin 1s linear infinite; }
     </style>
 </head>
 <body class="bg-[#09090b] text-zinc-100 min-h-screen pb-24 selection:bg-purple-500 selection:text-white">
@@ -20,7 +21,7 @@
     <header class="sticky top-0 z-50 bg-[#09090b]/80 backdrop-blur-xl border-b border-zinc-800/80 px-4 py-3 flex justify-between items-center">
         <div class="flex items-center space-x-2">
             <span class="text-xl font-bold tracking-tight text-purple-400">Lexicon</span>
-            <span class="text-xs bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded-full font-medium">Daily</span>
+            <span class="text-xs bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded-full font-medium">API Edition</span>
         </div>
         <div class="flex items-center space-x-2 text-sm">
             <div class="flex items-center space-x-1 bg-zinc-900 border border-zinc-800 px-2.5 py-1 rounded-full text-purple-400 font-semibold shadow-inner">
@@ -38,47 +39,50 @@
         <!-- TODAY / MAIN TAB -->
         <div id="tabHome" class="space-y-4">
             <!-- Word Card -->
-            <div class="bg-gradient-to-b from-zinc-900 to-[#121216] border border-zinc-800/80 rounded-2xl p-5 shadow-2xl relative overflow-hidden">
+            <div class="bg-gradient-to-b from-zinc-900 to-[#121216] border border-zinc-800/80 rounded-2xl p-5 shadow-2xl relative overflow-hidden min-h-[320px] flex flex-col justify-between">
                 <div class="absolute top-0 right-0 w-36 h-36 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
                 
-                <div class="flex justify-between items-start mb-3 relative z-10">
-                    <div>
-                        <span id="wordCategory" class="text-xs uppercase tracking-wider text-purple-400 font-semibold bg-purple-500/10 border border-purple-500/20 px-2.5 py-1 rounded-md">Literary</span>
-                        <h1 id="wordTitle" class="text-3xl font-extrabold tracking-tight mt-2 text-white">Ephemeral</h1>
-                    </div>
-                    <button onclick="toggleSave()" id="saveBtn" class="bg-zinc-800/80 border border-zinc-700/50 hover:border-purple-500/50 p-2.5 rounded-xl text-lg transition shadow-md">
-                        🤍
-                    </button>
+                <!-- Loading Overlay -->
+                <div id="loadingOverlay" class="absolute inset-0 bg-[#09090b]/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center space-y-3 hidden">
+                    <div class="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin-custom"></div>
+                    <p class="text-xs text-zinc-400 tracking-wider uppercase font-semibold">Fetching new word...</p>
                 </div>
 
-                <div class="flex items-center space-x-2 text-zinc-400 text-sm mb-4 relative z-10">
-                    <span id="wordPhonetic" class="font-mono text-zinc-400">/ɪˈfɛm.ər.əl/</span>
-                    <button onclick="speakWord()" class="bg-zinc-800 hover:bg-zinc-700 text-purple-300 px-2.5 py-1 rounded-full text-xs transition border border-zinc-700/50 flex items-center space-x-1">
-                        <span>🔊 Listen</span>
-                    </button>
-                </div>
-
-                <div class="space-y-3 border-t border-zinc-800/80 pt-4 relative z-10">
-                    <div>
-                        <span class="text-[10px] text-zinc-400 uppercase tracking-widest font-bold">Definition</span>
-                        <p id="wordDefinition" class="text-zinc-200 text-sm mt-0.5 leading-relaxed">Lasting for a very short time; transient.</p>
+                <div>
+                    <div class="flex justify-between items-start mb-3 relative z-10">
+                        <div>
+                            <span id="wordCategory" class="text-xs uppercase tracking-wider text-purple-400 font-semibold bg-purple-500/10 border border-purple-500/20 px-2.5 py-1 rounded-md">Vocabulary</span>
+                            <h1 id="wordTitle" class="text-3xl font-extrabold tracking-tight mt-2 text-white">Ephemeral</h1>
+                        </div>
+                        <button onclick="toggleSave()" id="saveBtn" class="bg-zinc-800/80 border border-zinc-700/50 hover:border-purple-500/50 p-2.5 rounded-xl text-lg transition shadow-md">
+                            🤍
+                        </button>
                     </div>
 
-                    <div>
-                        <span class="text-[10px] text-zinc-400 uppercase tracking-widest font-bold">Example</span>
-                        <p id="wordExample" class="text-zinc-300 text-sm italic mt-0.5 bg-zinc-950/60 p-3 rounded-xl border border-zinc-800/60">"Fame is ephemeral; character is lasting."</p>
+                    <div class="flex items-center space-x-2 text-zinc-400 text-sm mb-4 relative z-10">
+                        <span id="wordPhonetic" class="font-mono text-zinc-400">/ɪˈfɛm.ər.əl/</span>
+                        <button onclick="speakWord()" class="bg-zinc-800 hover:bg-zinc-700 text-purple-300 px-2.5 py-1 rounded-full text-xs transition border border-zinc-700/50 flex items-center space-x-1">
+                            <span>🔊 Listen</span>
+                        </button>
                     </div>
 
-                    <div>
-                        <span class="text-[10px] text-zinc-400 uppercase tracking-widest font-bold">Synonyms</span>
-                        <div id="wordSynonyms" class="flex flex-wrap gap-1.5 mt-1.5"></div>
+                    <div class="space-y-3 border-t border-zinc-800/80 pt-4 relative z-10">
+                        <div>
+                            <span class="text-[10px] text-zinc-400 uppercase tracking-widest font-bold">Definition</span>
+                            <p id="wordDefinition" class="text-zinc-200 text-sm mt-0.5 leading-relaxed">Lasting for a very short time; transient.</p>
+                        </div>
+
+                        <div>
+                            <span class="text-[10px] text-zinc-400 uppercase tracking-widest font-bold">Example</span>
+                            <p id="wordExample" class="text-zinc-300 text-sm italic mt-0.5 bg-zinc-950/60 p-3 rounded-xl border border-zinc-800/60">"Fame is ephemeral; character is lasting."</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Action Controls -->
             <div class="grid grid-cols-2 gap-3">
-                <button onclick="loadNewWord()" class="bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 hover:border-zinc-700 text-zinc-200 py-3 rounded-xl font-medium text-sm transition flex items-center justify-center space-x-2 shadow-lg">
+                <button onclick="fetchRandomWord()" class="bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 hover:border-zinc-700 text-zinc-200 py-3 rounded-xl font-medium text-sm transition flex items-center justify-center space-x-2 shadow-lg">
                     <span>🔄 Next Word</span>
                 </button>
                 <button onclick="shareWord()" class="bg-purple-600 hover:bg-purple-500 text-white py-3 rounded-xl font-medium text-sm transition flex items-center justify-center space-x-2 shadow-lg shadow-purple-600/25">
@@ -91,22 +95,16 @@
         <div id="tabQuiz" class="hidden space-y-4">
             <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 shadow-xl">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-base font-bold text-white">Daily Vocabulary Check</h2>
-                    <span id="quizProgress" class="text-xs text-purple-400 font-semibold bg-purple-500/10 px-2.5 py-1 rounded-md">Question 1/3</span>
+                    <h2 class="text-base font-bold text-white">Vocabulary Check</h2>
+                    <span id="quizProgress" class="text-xs text-purple-400 font-semibold bg-purple-500/10 px-2.5 py-1 rounded-md">Practice</span>
                 </div>
                 
-                <p id="quizQuestion" class="text-zinc-200 font-medium text-sm mb-4">What is the definition of "Ephemeral"?</p>
+                <p id="quizQuestion" class="text-zinc-200 font-medium text-sm mb-4">Test your knowledge with your saved and recent words.</p>
                 
                 <div id="quizOptions" class="space-y-2.5">
-                    <!-- Dynamically populated options -->
+                    <p class="text-xs text-zinc-400 text-center py-6">Browse a few words on the Today tab first to unlock quizzes!</p>
                 </div>
-
-                <div id="quizFeedback" class="mt-4 hidden p-3 rounded-xl text-sm font-medium text-center"></div>
             </div>
-            
-            <button onclick="initQuiz()" id="nextQuizBtn" class="hidden w-full bg-purple-600 hover:bg-purple-500 text-white py-3 rounded-xl font-medium text-sm transition shadow-lg shadow-purple-600/25">
-                Next Question ➡️
-            </button>
         </div>
 
         <!-- SAVED WORDS TAB -->
@@ -118,126 +116,96 @@
     </main>
 
     <script>
-        // Expanded vocabulary database (ready for scaling)
-        const words = [
-            {
-                word: "Ephemeral",
-                phonetic: "/ɪˈfɛm.ər.əl/",
-                category: "Literary",
-                definition: "Lasting for a very short time; transient.",
-                example: "\"Fame is ephemeral; true character is lasting.\"",
-                synonyms: ["Fleeting", "Transient", "Evanescent"]
-            },
-            {
-                word: "Serendipity",
-                phonetic: "/ˌsɛr.ənˈdɪp.ə.ti/",
-                category: "Advanced",
-                definition: "The occurrence of events by chance in a happy or beneficial way.",
-                example: "\"Finding my favorite book at the thrift store was pure serendipity.\"",
-                synonyms: ["Fluke", "Providence", "Blessing"]
-            },
-            {
-                word: "Mellifluous",
-                phonetic: "/məˈlɪf.lu.əs/",
-                category: "Articulate",
-                definition: "(Of a voice or words) sweet or musical; pleasant to hear.",
-                example: "\"She spoke with a mellifluous voice that instantly calmed the room.\"",
-                synonyms: ["Melodic", "Harmonious", "Silvery"]
-            },
-            {
-                word: "Petrichor",
-                phonetic: "/ˈpɛt.rɪ.kɔːr/",
-                category: "Nature",
-                definition: "A pleasant smell that frequently accompanies the first rain after a long period of warm, dry weather.",
-                example: "\"The heavy petrichor filled the air right before the storm broke.\"",
-                synonyms: ["Earth scent", "Rain aroma"]
-            },
-            {
-                word: "Resilient",
-                phonetic: "/rɪˈzɪl.jənt/",
-                category: "Workplace",
-                definition: "Able to withstand or recover quickly from difficult conditions.",
-                example: "\"Entrepreneurs need to be resilient when facing unexpected hurdles.\"",
-                synonyms: ["Tough", "Hardy", "Adaptable"]
-            },
-            {
-                word: "Sycophant",
-                phonetic: "/ˈsɪk.ə.fənt/",
-                category: "Advanced",
-                definition: "A person who acts obsequiously toward someone important in order to gain advantage.",
-                example: "\"He surrounded himself with sycophants who praised every idea he had.\"",
-                synonyms: ["Flatterer", "Yes-man", "Parasite"]
-            },
-            {
-                word: "Nadir",
-                phonetic: "/ˈneɪ.dɪər/",
-                category: "Literary",
-                definition: "The lowest point in the fortunes of a person or organization.",
-                example: "\"Entering the bear market was the nadir of his trading career.\"",
-                synonyms: ["Low point", "Bottom", "Rock bottom"]
-            },
-            {
-                word: "Ineffable",
-                phonetic: "/ɪnˈɛf.ə.bəl/",
-                category: "Articulate",
-                definition: "Too great or extreme to be expressed or described in words.",
-                example: "\"Standing before the grand mountain range, she felt an ineffable peace.\"",
-                synonyms: ["Indescribable", "Unspeakable", "Transcendent"]
-            }
+        // Curated backup pool for offline reliability & fast loading
+        let currentWord = {
+            word: "Ephemeral",
+            phonetic: "/ɪˈfɛm.ər.əl/",
+            category: "Literary",
+            definition: "Lasting for a very short time; transient.",
+            example: "Fame is ephemeral; true character is lasting."
+        };
+
+        const backupWords = [
+            { word: "Serendipity", phonetic: "/ˌsɛr.ənˈdɪp.ə.ti/", category: "Advanced", definition: "The occurrence of events by chance in a happy way.", example: "Finding my favorite book was pure serendipity." },
+            { word: "Mellifluous", phonetic: "/məˈlɪf.lu.əs/", category: "Articulate", definition: "(Of a voice or words) sweet or musical; pleasant to hear.", example: "She spoke with a mellifluous voice." },
+            { word: "Petrichor", phonetic: "/ˈpɛt.rɪ.kɔːr/", category: "Nature", definition: "A pleasant smell that accompanies rain after dry weather.", example: "The heavy petrichor filled the air before the storm." },
+            { word: "Resilient", phonetic: "/rɪˈzɪl.jənt/", category: "Workplace", definition: "Able to withstand or recover quickly from difficult conditions.", example: "Entrepreneurs need to be resilient." },
+            { word: "Ubiquitous", phonetic: "/juːˈbɪk.wɪ.təs/", category: "Advanced", definition: "Present, appearing, or found everywhere.", example: "Smartphones have become ubiquitous in modern life." },
+            { word: "Equanimity", phonetic: "/ˌɛkwəˈnɪmɪti/", category: "Mindset", definition: "Mental calmness and composure in difficult situations.", example: "She accepted both victory and defeat with equanimity." }
         ];
 
-        let currentIndex = 0;
         let savedWords = JSON.parse(localStorage.getItem('lexicon_saved')) || [];
         let streak = parseInt(localStorage.getItem('lexicon_streak')) || 1;
-
         document.getElementById('streakCount').innerText = streak;
 
-        function displayWord(index) {
-            const w = words[index];
+        function displayWord(w) {
             document.getElementById('wordTitle').innerText = w.word;
-            document.getElementById('wordPhonetic').innerText = w.phonetic;
-            document.getElementById('wordCategory').innerText = w.category;
+            document.getElementById('wordPhonetic').innerText = w.phonetic || '';
+            document.getElementById('wordCategory').innerText = w.category || 'Vocabulary';
             document.getElementById('wordDefinition').innerText = w.definition;
-            document.getElementById('wordExample').innerText = w.example;
-            
-            const synContainer = document.getElementById('wordSynonyms');
-            synContainer.innerHTML = w.synonyms.map(s => `<span class="text-xs bg-zinc-800/80 border border-zinc-700/50 text-zinc-300 px-2 py-0.5 rounded-md">${s}</span>`).join('');
-
+            document.getElementById('wordExample').innerText = `"${w.example}"`;
             updateSaveButtonState();
         }
 
-        function loadNewWord() {
-            currentIndex = (currentIndex + 1) % words.length;
-            displayWord(currentIndex);
+        async function fetchRandomWord() {
+            const loader = document.getElementById('loadingOverlay');
+            loader.classList.remove('hidden');
+
+            try {
+                // 1. Fetch random word from public API
+                const res = await fetch('https://random-word-api.herokuapp.com/word?number=1');
+                const data = await res.json();
+                const randomWord = data[0];
+
+                // 2. Fetch definition from Free Dictionary API
+                const dictRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${randomWord}`);
+                if (!dictRes.ok) throw new Error('Word definition not found');
+                const dictData = await dictRes.json();
+                
+                const entry = dictData[0];
+                const meaning = entry.meanings[0];
+                const definitionObj = meaning.definitions[0];
+
+                currentWord = {
+                    word: entry.word,
+                    phonetic: entry.phonetic || (entry.phonetics && entry.phonetics[0] ? entry.phonetics[0].text : ''),
+                    category: meaning.partOfSpeech.toUpperCase(),
+                    definition: definitionObj.definition,
+                    example: definitionObj.example || `An example using ${entry.word} in context.`
+                };
+
+                displayWord(currentWord);
+            } catch (error) {
+                // Fallback to backup array if API fails or word has no definitions
+                const fallback = backupWords[Math.floor(Math.random() * backupWords.length)];
+                currentWord = fallback;
+                displayWord(currentWord);
+            } finally {
+                loader.classList.add('hidden');
+            }
         }
 
         function speakWord() {
-            const w = words[currentIndex].word;
-            const utterance = new SpeechSynthesisUtterance(w);
+            const utterance = new SpeechSynthesisUtterance(currentWord.word);
             utterance.rate = 0.9;
             window.speechSynthesis.speak(utterance);
         }
 
         function toggleSave() {
-            const w = words[currentIndex];
-            const existsIndex = savedWords.findIndex(item => item.word === w.word);
-            
+            const existsIndex = savedWords.findIndex(item => item.word === currentWord.word);
             if (existsIndex > -1) {
                 savedWords.splice(existsIndex, 1);
             } else {
-                savedWords.push(w);
+                savedWords.push(currentWord);
             }
-            
             localStorage.setItem('lexicon_saved', JSON.stringify(savedWords));
             updateSaveButtonState();
             renderSavedList();
         }
 
         function updateSaveButtonState() {
-            const w = words[currentIndex];
-            const isSaved = savedWords.some(item => item.word === w.word);
-            const btn = document.getElementById('saveBtn');
-            btn.innerHTML = isSaved ? '❤️' : '🤍';
+            const isSaved = savedWords.some(item => item.word === currentWord.word);
+            document.getElementById('saveBtn').innerHTML = isSaved ? '❤️' : '🤍';
         }
 
         function renderSavedList() {
@@ -249,7 +217,7 @@
             list.innerHTML = savedWords.map(w => `
                 <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl flex justify-between items-center shadow-md">
                     <div>
-                        <h3 class="font-bold text-white text-sm">${w.word} <span class="text-xs font-normal text-purple-400 ml-1">${w.phonetic}</span></h3>
+                        <h3 class="font-bold text-white text-sm">${w.word} <span class="text-xs font-normal text-purple-400 ml-1">${w.phonetic || ''}</span></h3>
                         <p class="text-xs text-zinc-400 mt-1">${w.definition}</p>
                     </div>
                 </div>
@@ -257,8 +225,7 @@
         }
 
         function shareWord() {
-            const w = words[currentIndex];
-            const text = `Word of the Day: *${w.word}* (${w.phonetic})\nDefinition: ${w.definition}\nExample: ${w.example}`;
+            const text = `Word: *${currentWord.word}* (${currentWord.phonetic || ''})\nDefinition: ${currentWord.definition}\nExample: "${currentWord.example}"`;
             if (navigator.share) {
                 navigator.share({ title: 'Lexicon Daily', text: text });
             } else {
@@ -276,7 +243,6 @@
             const navQuiz = document.getElementById('navQuiz');
             const navSaved = document.getElementById('navSaved');
 
-            // Reset all tabs & nav styles
             homeTab.classList.add('hidden');
             quizTab.classList.add('hidden');
             savedTab.classList.add('hidden');
@@ -291,7 +257,7 @@
             } else if (tab === 'quiz') {
                 quizTab.classList.remove('hidden');
                 navQuiz.className = "px-3 py-1.5 rounded-lg bg-purple-600 text-white font-medium transition shadow-lg shadow-purple-600/20";
-                initQuiz();
+                loadQuiz();
             } else {
                 savedTab.classList.remove('hidden');
                 navSaved.className = "px-3 py-1.5 rounded-lg bg-purple-600 text-white font-medium transition shadow-lg shadow-purple-600/20";
@@ -299,57 +265,31 @@
             }
         }
 
-        // Simple interactive quiz engine
-        let currentQuizIndex = 0;
-        function initQuiz() {
-            const qObj = words[currentQuizIndex % words.length];
-            document.getElementById('quizProgress').innerText = `Question ${(currentQuizIndex % words.length) + 1}/${words.length}`;
-            document.getElementById('quizQuestion').innerText = `What does "${qObj.word}" mean?`;
+        function loadQuiz() {
+            const quizOptions = document.getElementById('quizOptions');
+            if(savedWords.length === 0) {
+                quizOptions.innerHTML = `<p class="text-xs text-zinc-400 text-center py-6">Save a few words using the heart icon on the Today tab to unlock practice quizzes!</p>`;
+                return;
+            }
+            const randomSaved = savedWords[Math.floor(Math.random() * savedWords.length)];
+            document.getElementById('quizQuestion').innerText = `What is the definition of "${randomSaved.word}"?`;
             
-            // Generate options (1 correct + 3 random incorrect)
-            let options = [qObj.definition];
-            while(options.length < 4) {
-                let randomDef = words[Math.floor(Math.random() * words.length)].definition;
-                if(!options.includes(randomDef)) options.push(randomDef);
+            let options = [randomSaved.definition];
+            while(options.length < 3 && backupWords.length >= options.length) {
+                let randDef = backupWords[Math.floor(Math.random() * backupWords.length)].definition;
+                if(!options.includes(randDef)) options.push(randDef);
             }
             options.sort(() => Math.random() - 0.5);
 
-            const optContainer = document.getElementById('quizOptions');
-            optContainer.innerHTML = '';
-            document.getElementById('quizFeedback').classList.add('hidden');
-            document.getElementById('nextQuizBtn').classList.add('hidden');
-
-            options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = "w-full text-left bg-zinc-950/80 border border-zinc-800 hover:border-purple-500/50 p-3 rounded-xl text-xs text-zinc-300 transition shadow-inner";
-                btn.innerText = opt;
-                btn.onclick = () => checkAnswer(opt, qObj.definition, btn);
-                optContainer.appendChild(btn);
-            });
+            quizOptions.innerHTML = options.map(opt => `
+                <button onclick="alert('${opt === randomSaved.definition ? "Correct! 🎉" : "Incorrect. Try another!"}')" class="w-full text-left bg-zinc-950/80 border border-zinc-800 hover:border-purple-500/50 p-3 rounded-xl text-xs text-zinc-300 transition shadow-inner">
+                    ${opt}
+                </button>
+            `).join('');
         }
 
-        function checkAnswer(selected, correct, btnElement) {
-            const feedback = document.getElementById('quizFeedback');
-            feedback.classList.remove('hidden');
-            
-            if(selected === correct) {
-                btnElement.className = "w-full text-left bg-purple-950/40 border border-purple-500 p-3 rounded-xl text-xs text-purple-200 shadow-md";
-                feedback.innerText = "✨ Correct! Spot on.";
-                feedback.className = "mt-4 p-3 rounded-xl text-sm font-medium text-center bg-purple-500/10 text-purple-300 border border-purple-500/20";
-            } else {
-                btnElement.className = "w-full text-left bg-red-950/40 border border-red-500/50 p-3 rounded-xl text-xs text-red-200 shadow-md";
-                feedback.innerText = `❌ Not quite. The correct definition is: "${correct}"`;
-                feedback.className = "mt-4 p-3 rounded-xl text-sm font-medium text-center bg-red-500/10 text-red-300 border border-red-500/20";
-            }
-            
-            document.getElementById('nextQuizBtn').classList.remove('hidden');
-            currentQuizIndex++;
-        }
-
-        document.getElementById('nextQuizBtn').onclick = initQuiz;
-
-        // Initialize App
-        displayWord(currentIndex);
+        // Initialize with default word
+        displayWord(currentWord);
     </script>
 </body>
 </html>
