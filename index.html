@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lexicon Daily — Airbnb Dark Edition</title>
+    <title>Lexicon Daily — Infinite Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
@@ -31,6 +31,8 @@
         body { background-color: #0B0B0B; color: #F4F4F5; font-family: 'Plus Jakarta Sans', sans-serif; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .animate-spin-custom { animation: spin 0.8s linear infinite; }
     </style>
 </head>
 <body class="bg-[#0B0B0B] text-zinc-100 min-h-screen pb-28 antialiased selection:bg-[#FF385C] selection:text-white">
@@ -45,12 +47,16 @@
                 </div>
                 <div>
                     <span class="text-base font-extrabold tracking-tight text-white block leading-none">Lexicon</span>
-                    <span class="text-[10px] text-zinc-400 font-medium tracking-wide">Airbnb Dark Edition</span>
+                    <span class="text-[10px] text-zinc-400 font-medium tracking-wide">Infinite API Edition</span>
                 </div>
             </div>
 
-            <!-- Streak & Tab Switcher Pill -->
+            <!-- Streak & Word Counter Pill -->
             <div class="flex items-center space-x-2">
+                <div class="flex items-center space-x-1 bg-[#161618] border border-[#2F2F35] px-2.5 py-1 rounded-full text-xs font-semibold text-zinc-200">
+                    <span>📚</span>
+                    <span id="wordsSeenCount" class="text-white">1</span>
+                </div>
                 <div class="flex items-center space-x-1 bg-[#161618] border border-[#2F2F35] px-2.5 py-1 rounded-full text-xs font-semibold text-zinc-200">
                     <span>🔥</span>
                     <span id="streakCount" class="text-white">1</span>d
@@ -64,59 +70,53 @@
 
         <!-- TODAY TAB -->
         <div id="tabHome" class="space-y-4">
-            
-            <!-- Category Filter Chips (Airbnb Style) -->
-            <div class="flex space-x-2 overflow-x-auto no-scrollbar py-1 text-xs">
-                <button onclick="filterCategory('All')" class="category-chip active px-3.5 py-1.5 rounded-full border border-[#FF385C] bg-[#FF385C] text-white font-medium whitespace-nowrap transition">All Words</button>
-                <button onclick="filterCategory('Literary')" class="category-chip px-3.5 py-1.5 rounded-full border border-[#2F2F35] bg-[#161618] text-zinc-400 hover:text-white font-medium whitespace-nowrap transition">Literary</button>
-                <button onclick="filterCategory('Advanced')" class="category-chip px-3.5 py-1.5 rounded-full border border-[#2F2F35] bg-[#161618] text-zinc-400 hover:text-white font-medium whitespace-nowrap transition">Advanced</button>
-                <button onclick="filterCategory('Articulate')" class="category-chip px-3.5 py-1.5 rounded-full border border-[#2F2F35] bg-[#161618] text-zinc-400 hover:text-white font-medium whitespace-nowrap transition">Articulate</button>
-                <button onclick="filterCategory('Workplace')" class="category-chip px-3.5 py-1.5 rounded-full border border-[#2F2F35] bg-[#161618] text-zinc-400 hover:text-white font-medium whitespace-nowrap transition">Workplace</button>
-            </div>
 
             <!-- Modern Airbnb Listing Card -->
-            <div class="bg-[#161618] border border-[#2F2F35] rounded-3xl p-6 shadow-2xl relative overflow-hidden space-y-5">
+            <div class="bg-[#161618] border border-[#2F2F35] rounded-3xl p-6 shadow-2xl relative overflow-hidden space-y-5 min-h-[360px] flex flex-col justify-between">
                 
-                <div class="flex justify-between items-start">
-                    <div>
-                        <span id="wordCategory" class="text-[10px] font-bold uppercase tracking-widest text-[#FF385C] bg-[#FF385C]/10 border border-[#FF385C]/20 px-2.5 py-1 rounded-md">Literary</span>
-                        <h1 id="wordTitle" class="text-3xl font-extrabold tracking-tight mt-2.5 text-white">Ephemeral</h1>
-                    </div>
-                    <button onclick="toggleSave()" id="saveBtn" class="w-10 h-10 rounded-full bg-[#0B0B0B] border border-[#2F2F35] flex items-center justify-center text-base hover:border-[#FF385C]/50 transition shadow-inner">
-                        🤍
-                    </button>
+                <!-- Loading Overlay -->
+                <div id="loadingOverlay" class="absolute inset-0 bg-[#0B0B0B]/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center space-y-3 hidden">
+                    <div class="w-8 h-8 border-2 border-[#FF385C] border-t-transparent rounded-full animate-spin-custom"></div>
+                    <p class="text-xs text-zinc-400 tracking-wider uppercase font-semibold">Fetching infinite vocabulary...</p>
                 </div>
 
-                <!-- Phonetics & Speech -->
-                <div class="flex items-center space-x-3 pt-1">
-                    <span id="wordPhonetic" class="font-mono text-xs text-zinc-400">/ɪˈfɛm.ər.əl/</span>
-                    <button onclick="speakWord()" class="bg-[#0B0B0B] hover:bg-zinc-800 text-[#FF385C] px-3 py-1 rounded-full text-xs font-semibold transition border border-[#2F2F35] flex items-center space-x-1.5">
-                        <span>🔊 Listen</span>
-                    </button>
-                </div>
-
-                <!-- Definition & Examples Section -->
-                <div class="space-y-4 border-t border-[#2F2F35] pt-4">
-                    <div>
-                        <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-1">Definition</span>
-                        <p id="wordDefinition" class="text-sm text-zinc-200 leading-relaxed font-normal">Lasting for a very short time; transient.</p>
+                <div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span id="wordCategory" class="text-[10px] font-bold uppercase tracking-widest text-[#FF385C] bg-[#FF385C]/10 border border-[#FF385C]/20 px-2.5 py-1 rounded-md">Vocabulary</span>
+                            <h1 id="wordTitle" class="text-3xl font-extrabold tracking-tight mt-2.5 text-white">Ephemeral</h1>
+                        </div>
+                        <button onclick="toggleSave()" id="saveBtn" class="w-10 h-10 rounded-full bg-[#0B0B0B] border border-[#2F2F35] flex items-center justify-center text-base hover:border-[#FF385C]/50 transition shadow-inner">
+                            🤍
+                        </button>
                     </div>
 
-                    <div>
-                        <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-1">In Context</span>
-                        <p id="wordExample" class="text-xs text-zinc-300 italic bg-[#0B0B0B] p-3.5 rounded-2xl border border-[#2F2F35] leading-relaxed">"Fame is ephemeral; true character is lasting."</p>
+                    <!-- Phonetics & Speech -->
+                    <div class="flex items-center space-x-3 pt-3">
+                        <span id="wordPhonetic" class="font-mono text-xs text-zinc-400">/ɪˈfɛm.ər.əl/</span>
+                        <button onclick="speakWord()" class="bg-[#0B0B0B] hover:bg-zinc-800 text-[#FF385C] px-3 py-1 rounded-full text-xs font-semibold transition border border-[#2F2F35] flex items-center space-x-1.5">
+                            <span>🔊 Listen</span>
+                        </button>
                     </div>
 
-                    <div>
-                        <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-1.5">Synonyms</span>
-                        <div id="wordSynonyms" class="flex flex-wrap gap-1.5"></div>
+                    <!-- Definition & Examples Section -->
+                    <div class="space-y-4 border-t border-[#2F2F35] pt-4 mt-4">
+                        <div>
+                            <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-1">Definition</span>
+                            <p id="wordDefinition" class="text-sm text-zinc-200 leading-relaxed font-normal">Lasting for a very short time; transient.</p>
+                        </div>
+
+                        <div>
+                            <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-1">In Context</span>
+                            <p id="wordExample" class="text-xs text-zinc-300 italic bg-[#0B0B0B] p-3.5 rounded-2xl border border-[#2F2F35] leading-relaxed">"Fame is ephemeral; true character is lasting."</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Action Buttons -->
             <div class="grid grid-cols-2 gap-3">
-                <button onclick="loadRandomWord()" class="bg-[#161618] border border-[#2F2F35] hover:bg-zinc-800 text-zinc-200 py-3.5 rounded-2xl font-semibold text-xs transition flex items-center justify-center space-x-2 shadow-lg">
+                <button onclick="fetchInfiniteWord()" class="bg-[#161618] border border-[#2F2F35] hover:bg-zinc-800 text-zinc-200 py-3.5 rounded-2xl font-semibold text-xs transition flex items-center justify-center space-x-2 shadow-lg">
                     <span>🔄 Next Word</span>
                 </button>
                 <button onclick="shareWord()" class="bg-[#FF385C] hover:bg-[#e03150] text-white py-3.5 rounded-2xl font-semibold text-xs transition flex items-center justify-center space-x-2 shadow-lg shadow-[#FF385C]/20">
@@ -138,3 +138,38 @@
                 <div id="quizOptions" class="space-y-2.5"></div>
 
                 <div id="quizFeedback" class="hidden p-3 rounded-2xl text-xs font-semibold text-center"></div>
+            </div>
+            <button onclick="loadQuiz()" id="nextQuizBtn" class="hidden w-full bg-[#FF385C] hover:bg-[#e03150] text-white py-3.5 rounded-2xl font-semibold text-xs transition shadow-lg shadow-[#FF385C]/20">
+                Next Question ➡️
+            </button>
+        </div>
+
+        <!-- SAVED TAB -->
+        <div id="tabSaved" class="hidden space-y-3">
+            <h2 class="text-sm font-bold text-white px-1">Saved Vocabulary</h2>
+            <div id="savedList" class="space-y-2.5"></div>
+        </div>
+
+    </main>
+
+    <!-- Floating Airbnb Pill Bottom Navigation -->
+    <nav class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-[#161618]/95 backdrop-blur-xl border border-[#2F2F35] rounded-full p-1.5 flex space-x-1 shadow-2xl z-50">
+        <button onclick="switchTab('home')" id="navHome" class="px-5 py-2.5 rounded-full bg-[#FF385C] text-white font-semibold text-xs transition flex items-center space-x-1.5 shadow-md">
+            <span>📖 Today</span>
+        </button>
+        <button onclick="switchTab('quiz')" id="navQuiz" class="px-5 py-2.5 rounded-full text-zinc-400 hover:text-white font-semibold text-xs transition flex items-center space-x-1.5">
+            <span>⚡ Quiz</span>
+        </button>
+        <button onclick="switchTab('saved')" id="navSaved" class="px-5 py-2.5 rounded-full text-zinc-400 hover:text-white font-semibold text-xs transition flex items-center space-x-1.5">
+            <span>❤️ Saved</span>
+        </button>
+    </nav>
+
+    <script>
+        // High-level fallback pool for offline capability
+        const backupPool = [
+            { word: "Ephemeral", phonetic: "/ɪˈfɛm.ər.əl/", category: "Literary", definition: "Lasting for a very short time; transient.", example: "Fame is ephemeral; true character is lasting." },
+            { word: "Serendipity", phonetic: "/ˌsɛr.ənˈdɪp.ə.ti/", category: "Advanced", definition: "The occurrence of events by chance in a happy or beneficial way.", example: "Finding my favorite book at the thrift store was pure serendipity." },
+            { word: "Mellifluous", phonetic: "/məˈlɪf.lu.əs/", category: "Articulate", definition: "(Of a voice or words) sweet or musical; pleasant to hear.", example: "She spoke with a mellifluous voice that instantly calmed the room." },
+            { word: "Petrichor", phonetic: "/ˈpɛt.rɪ.kɔːr/", category: "Nature", definition: "A pleasant smell that accompanies the first rain after a long dry period.", example: "The heavy petrichor filled the air right before the storm broke." },
+            { word: "Resilient", phonetic: "/rɪˈzɪl.jənt/", category: "Workplace", definition: "Able to withstand or recover quickly from difficult conditions.", example: "Entrepreneurs need to be resilient when
