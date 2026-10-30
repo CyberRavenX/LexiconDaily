@@ -1,159 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAV3N's Hub</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Lexicon Daily</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
 </head>
+<body class="bg-zinc-950 text-zinc-100 min-h-screen pb-20">
 
-<body>
+    <!-- App Header -->
+    <header class="sticky top-0 z-50 bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800 px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <span class="text-xl font-bold tracking-tight text-indigo-400">Lexicon</span>
+            <span class="text-xs bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full font-medium">Daily</span>
+        </div>
+        <div class="flex items-center space-x-3 text-sm">
+            <div class="flex items-center space-x-1 bg-zinc-800 px-2.5 py-1 rounded-full text-amber-400 font-semibold">
+                🔥 <span id="streakCount">1</span>d
+            </div>
+            <button onclick="switchTab('home')" id="navHome" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-medium transition">Today</button>
+            <button onclick="switchTab('saved')" id="navSaved" class="px-3 py-1.5 rounded-lg text-zinc-400 hover:text-white transition">Saved</button>
+        </div>
+    </header>
 
-    <!-- Enhanced Navigation Header -->
-    <nav>
-        <div class="nav-container">
-            <a href="index.html" class="brand-logo">RAV3N</a>
+    <!-- Main Mobile Content Area -->
+    <main class="max-w-md mx-auto p-4 mt-2">
 
-            <!-- Center Quick Navigation / Hub Links -->
-            <div class="nav-center-links">
-                <a href="index.html" class="active-nav">Insights</a>
-                <a href="#articles-container">Library</a>
-                <a href="#footer">About & Contact</a>
+        <!-- TODAY / MAIN TAB -->
+        <div id="tabHome" class="space-y-4">
+            <!-- Word Card -->
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 shadow-xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <span id="wordCategory" class="text-xs uppercase tracking-wider text-indigo-400 font-semibold bg-indigo-500/10 px-2.5 py-1 rounded-md">Literary</span>
+                        <h1 id="wordTitle" class="text-3xl font-bold tracking-tight mt-2 text-white">Ephemeral</h1>
+                    </div>
+                    <button onclick="toggleSave()" id="saveBtn" class="text-zinc-400 hover:text-amber-400 p-2 text-xl transition">
+                        🤍
+                    </button>
+                </div>
+
+                <div class="flex items-center space-x-2 text-zinc-400 text-sm mb-4">
+                    <span id="wordPhonetic">/ɪˈfɛm.ər.əl/</span>
+                    <button onclick="speakWord()" class="bg-zinc-800 hover:bg-zinc-700 text-indigo-300 p-1.5 rounded-full text-xs transition">
+                        🔊 Listen
+                    </button>
+                </div>
+
+                <div class="space-y-3 border-t border-zinc-800/80 pt-4">
+                    <div>
+                        <span class="text-xs text-zinc-500 uppercase font-semibold">Definition</span>
+                        <p id="wordDefinition" class="text-zinc-200 text-sm mt-0.5">Lasting for a very short time; transient.</p>
+                    </div>
+
+                    <div>
+                        <span class="text-xs text-zinc-500 uppercase font-semibold">Example</span>
+                        <p id="wordExample" class="text-zinc-300 text-sm italic mt-0.5 bg-zinc-950/50 p-2.5 rounded-lg border border-zinc-800/50">"Fame is ephemeral; character is lasting."</p>
+                    </div>
+
+                    <div>
+                        <span class="text-xs text-zinc-500 uppercase font-semibold">Synonyms</span>
+                        <div id="wordSynonyms" class="flex flex-wrap gap-1.5 mt-1"></div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Right Action Links -->
-            <div class="nav-links">
-                <a href="https://x.com/rav3nwrites" target="_blank">Twitter</a>
+            <!-- Action Controls -->
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="loadNewWord()" class="bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-200 py-3 rounded-xl font-medium text-sm transition flex items-center justify-center space-x-2">
+                    <span>🔄 Next Word</span>
+                </button>
+                <button onclick="shareWord()" class="bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-medium text-sm transition flex items-center justify-center space-x-2">
+                    <span>📤 Share Word</span>
+                </button>
             </div>
         </div>
-    </nav>
 
-    <!-- Main Content -->
-    <main class="max-w-4xl">
-        <header>
-            <h1>Insights & Strategy.</h1>
-            <p>High-level technical breakdowns, protocol architecture, and digital growth systems.</p>
-        </header>
-
-        <!-- Category Filters -->
-        <div class="category-filters">
-            <button onclick="filterCategory('All', event)" class="category-btn active">All Articles</button>
-            <button onclick="filterCategory('Cybersecurity', event)" class="category-btn">Cybersecurity</button>
-            <button onclick="filterCategory('Web3', event)" class="category-btn">Web3</button>
-            <button onclick="filterCategory('Crypto', event)" class="category-btn">Crypto</button>
-            <button onclick="filterCategory('NFTs', event)" class="category-btn">NFTs</button>
+        <!-- SAVED WORDS TAB -->
+        <div id="tabSaved" class="hidden space-y-3">
+            <h2 class="text-lg font-bold text-white mb-2">Saved Vocabulary</h2>
+            <div id="savedList" class="space-y-2"></div>
         </div>
 
-        <!-- Articles Container -->
-        <div id="articles-container">
-            <!-- Dynamic Articles Load Here -->
-        </div>
     </main>
 
-    <!-- Professional Footer -->
-    <footer id="footer">
-        <div class="footer-container">
-            <div>
-                <p class="footer-brand">RAV3N</p>
-                <p class="footer-copy">Curated and authored by Raven.</p>
-            </div>
-            <div class="footer-socials">
-                <a href="https://x.com/rav3nwrites" target="_blank">Twitter / X</a>
-            </div>
-        </div>
-    </footer>
-
-    <!-- JavaScript Data and Filtering Logic -->
     <script>
-        const articles = [
+        const words = [
             {
-                id: "advanced-network-reconnaissance",
-                category: "Cybersecurity",
-                title: "Advanced Network Reconnaissance & Port Scanning Mechanics",
-                summary: "An analytical breakdown of TCP handshaking behaviors, stealth SYN scans, and firewall evasion techniques."
+                word: "Ephemeral",
+                phonetic: "/ɪˈfɛm.ər.əl/",
+                category: "Literary",
+                definition: "Lasting for a very short time; transient.",
+                example: "\"Fame is ephemeral; true character is lasting.\"",
+                synonyms: ["Fleeting", "Transient", "Evanescent"]
             },
             {
-                id: "incident-response-playbook",
-                category: "Cybersecurity",
-                title: "Building an Enterprise Incident Response Playbook",
-                summary: "Step-by-step containment strategies, log forensics, and malware isolation protocols for security teams."
+                word: "Serendipity",
+                phonetic: "/ˌsɛr.ənˈdɪp.ə.ti/",
+                category: "Advanced",
+                definition: "The occurrence of events by chance in a happy or beneficial way.",
+                example: "\"Finding my favorite book at the thrift store was pure serendipity.\"",
+                synonyms: ["Fluke", "Providence", "Blessing"]
             },
             {
-                id: "modular-blockchain-architecture",
-                category: "Web3",
-                title: "The Shift from Monolithic to Modular Blockchain Architecture",
-                summary: "Separating consensus, execution, and data availability layers to optimize throughput and scale infrastructure."
+                word: "Mellifluous",
+                phonetic: "/məˈlɪf.lu.əs/",
+                category: "Articulate",
+                definition: "(Of a voice or words) sweet or musical; pleasant to hear.",
+                example: "\"She spoke with a mellifluous voice that instantly calmed the room.\"",
+                synonyms: ["Melodic", "Harmonious", "Silvery"]
             },
             {
-                id: "zero-knowledge-rollups",
-                category: "Web3",
-                title: "Scaling Layer 2: The Mathematical Reality of Zero-Knowledge Rollups",
-                summary: "How validity proofs eliminate trusted sequencers and secure decentralized state transitions cryptographically."
+                word: "Petrichor",
+                phonetic: "/ˈpɛt.rɪ.kɔːr/",
+                category: "Nature",
+                definition: "A pleasant smell that frequently accompanies the first rain after a long period of warm, dry weather.",
+                example: "\"The heavy petrichor filled the air right before the storm broke.\"",
+                synonyms: ["Earth scent", "Rain aroma"]
             },
             {
-                id: "liquidity-market-makers",
-                category: "Crypto",
-                title: "Automated Market Maker Dynamics and Impermanent Loss Mechanics",
-                summary: "Mathematical models governing constant product pools and hedging strategies for liquidity providers."
-            },
-            {
-                id: "cross-chain-bridges",
-                category: "Crypto",
-                title: "Security Vectors in Cross-Chain Bridge Protocols",
-                summary: "Analyzing validator lock-and-mint models versus trustless light-client verification mechanisms."
-            },
-            {
-                id: "smart-contract-nft-standards",
-                category: "NFTs",
-                title: "Dynamic On-Chain Metadata and Generative Token Standards",
-                summary: "Moving away from IPFS storage toward fully autonomous, decentralized smart contract rendering engines."
-            },
-            {
-                id: "economics-of-digital-collectibles",
-                category: "NFTs",
-                title: "The Economics Of Digital Collectibles",
-                summary: "Digital collectibles have moved past speculation into a resilient economy built on community ownership, automated creator monetization, and real-world utility."
-
-            },
+                word: "Resilient",
+                phonetic: "/rɪˈzɪl.jənt/",
+                category: "Workplace",
+                definition: "Able to withstand or recover quickly from difficult conditions.",
+                example: "\"Entrepreneurs need to be resilient when facing unexpected hurdles.\"",
+                synonyms: ["Tough", "Hardy", "Adaptable"]
+            }
         ];
 
-        function renderArticles(filter = 'All') {
-            const container = document.getElementById("articles-container");
-            container.innerHTML = "";
+        let currentIndex = 0;
+        let savedWords = JSON.parse(localStorage.getItem('lexicon_saved')) || [];
+        let streak = parseInt(localStorage.getItem('lexicon_streak')) || 1;
 
-            const filtered = filter === 'All' ? articles : articles.filter(a => a.category === filter);
+        document.getElementById('streakCount').innerText = streak;
 
-            if (filtered.length === 0) {
-                container.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem; padding: 2rem 0;">No articles found in this category yet.</p>`;
+        function displayWord(index) {
+            const w = words[index];
+            document.getElementById('wordTitle').innerText = w.word;
+            document.getElementById('wordPhonetic').innerText = w.phonetic;
+            document.getElementById('wordCategory').innerText = w.category;
+            document.getElementById('wordDefinition').innerText = w.definition;
+            document.getElementById('wordExample').innerText = w.example;
+            
+            const synContainer = document.getElementById('wordSynonyms');
+            synContainer.innerHTML = w.synonyms.map(s => `<span class="text-xs bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded">${s}</span>`).join('');
+
+            updateSaveButtonState();
+        }
+
+        function loadNewWord() {
+            currentIndex = (currentIndex + 1) % words.length;
+            displayWord(currentIndex);
+        }
+
+        function speakWord() {
+            const w = words[currentIndex].word;
+            const utterance = new SpeechSynthesisUtterance(w);
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function toggleSave() {
+            const w = words[currentIndex];
+            const existsIndex = savedWords.findIndex(item => item.word === w.word);
+            
+            if (existsIndex > -1) {
+                savedWords.splice(existsIndex, 1);
+            } else {
+                savedWords.push(w);
+            }
+            
+            localStorage.setItem('lexicon_saved', JSON.stringify(savedWords));
+            updateSaveButtonState();
+            renderSavedList();
+        }
+
+        function updateSaveButtonState() {
+            const w = words[currentIndex];
+            const isSaved = savedWords.some(item => item.word === w.word);
+            const btn = document.getElementById('saveBtn');
+            btn.innerText = isSaved ? '❤️' : '🤍';
+        }
+
+        function renderSavedList() {
+            const list = document.getElementById('savedList');
+            if (savedWords.length === 0) {
+                list.innerHTML = `<p class="text-zinc-500 text-sm text-center py-8">No saved words yet. Tap the heart icon on any word to save it here!</p>`;
                 return;
             }
-
-            filtered.forEach(art => {
-                container.innerHTML += `
-                    <a href="post.html?id=${art.id}" class="article-card">
-                        <div>
-                            <div class="card-meta">
-                                <span class="card-tag">${art.category}</span>
-                            </div>
-                            <h2>${art.title}</h2>
-                            <p>${art.summary}</p>
-                        </div>
-                    </a>
-                `;
-            });
+            list.innerHTML = savedWords.map(w => `
+                <div class="bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-white text-sm">${w.word}</h3>
+                        <p class="text-xs text-zinc-400 mt-0.5">${w.definition}</p>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function filterCategory(category, event) {
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            renderArticles(category);
+        function shareWord() {
+            const w = words[currentIndex];
+            const text = `Word of the Day: *${w.word}* (${w.phonetic})\nDefinition: ${w.definition}\nExample: ${w.example}`;
+            if (navigator.share) {
+                navigator.share({ title: 'Lexicon Daily', text: text });
+            } else {
+                navigator.clipboard.writeText(text);
+                alert('Word copied to clipboard!');
+            }
         }
 
-        renderArticles('All');
+        function switchTab(tab) {
+            const homeTab = document.getElementById('tabHome');
+            const savedTab = document.getElementById('tabSaved');
+            const navHome = document.getElementById('navHome');
+            const navSaved = document.getElementById('navSaved');
+
+            if (tab === 'home') {
+                homeTab.classList.remove('hidden');
+                savedTab.classList.add('hidden');
+                navHome.className = "px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-medium transition";
+                navSaved.className = "px-3 py-1.5 rounded-lg text-zinc-400 hover:text-white transition";
+            } else {
+                homeTab.classList.add('hidden');
+                savedTab.classList.remove('hidden');
+                navSaved.className = "px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-medium transition";
+                navHome.className = "px-3 py-1.5 rounded-lg text-zinc-400 hover:text-white transition";
+                renderSavedList();
+            }
+        }
+
+        displayWord(currentIndex);
     </script>
 </body>
-
 </html>
