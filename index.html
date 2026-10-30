@@ -114,3 +114,183 @@
         </div>
 
     </main>
+
+    <script>
+        // Comprehensive high-level vocabulary database (Expansible anytime)
+        const lexiconDB = [
+            { word: "Ephemeral", phonetic: "/ɪˈfɛm.ər.əl/", category: "Literary", definition: "Lasting for a very short time; transient.", example: "Fame is ephemeral; true character is lasting.", synonyms: ["Fleeting", "Transient", "Evanescent"] },
+            { word: "Serendipity", phonetic: "/ˌsɛr.ənˈdɪp.ə.ti/", category: "Advanced", definition: "The occurrence of events by chance in a happy or beneficial way.", example: "Finding my favorite book at the thrift store was pure serendipity.", synonyms: ["Fluke", "Providence", "Blessing"] },
+            { word: "Mellifluous", phonetic: "/məˈlɪf.lu.əs/", category: "Articulate", definition: "(Of a voice or words) sweet or musical; pleasant to hear.", example: "She spoke with a mellifluous voice that instantly calmed the room.", synonyms: ["Melodic", "Harmonious", "Silvery"] },
+            { word: "Petrichor", phonetic: "/ˈpɛt.rɪ.kɔːr/", category: "Nature", definition: "A pleasant smell that accompanies the first rain after a long dry period.", example: "The heavy petrichor filled the air right before the storm broke.", synonyms: ["Earth scent", "Rain aroma"] },
+            { word: "Resilient", phonetic: "/rɪˈzɪl.jənt/", category: "Workplace", definition: "Able to withstand or recover quickly from difficult conditions.", example: "Entrepreneurs need to be resilient when facing unexpected hurdles.", synonyms: ["Tough", "Hardy", "Adaptable"] },
+            { word: "Sycophant", phonetic: "/ˈsɪk.ə.fənt/", category: "Advanced", definition: "A person who acts obsequiously toward someone important to gain advantage.", example: "He surrounded himself with sycophants who praised every idea he had.", synonyms: ["Flatterer", "Yes-man", "Parasite"] },
+            { word: "Nadir", phonetic: "/ˈneɪ.dɪər/", category: "Literary", definition: "The lowest point in the fortunes of a person or organization.", example: "Entering the bear market was the nadir of his trading career.", synonyms: ["Low point", "Bottom", "Rock bottom"] },
+            { word: "Ineffable", phonetic: "/ɪnˈɛf.ə.bəl/", category: "Articulate", definition: "Too great or extreme to be expressed or described in words.", example: "Standing before the grand mountain range, she felt an ineffable peace.", synonyms: ["Indescribable", "Unspeakable", "Transcendent"] },
+            { word: "Ubiquitous", phonetic: "/juːˈbɪk.wɪ.təs/", category: "Advanced", definition: "Present, appearing, or found everywhere.", example: "Smartphones have become ubiquitous in modern life.", synonyms: ["Omnipresent", "Pervasive", "Universal"] },
+            { word: "Equanimity", phonetic: "/ˌɛkwəˈnɪmɪti/", category: "Mindset", definition: "Mental calmness, composure, and evenness of temper in difficult situations.", example: "She accepted both victory and defeat with equal equanimity.", synonyms: ["Composure", "Serenity", "Poise"] },
+            { word: "Fastidious", phonetic: "/fæˈstɪd.i.əs/", category: "Advanced", definition: "Very attentive to and concerned about accuracy and detail.", example: "He was fastidious about his wardrobe and styling.", synonyms: ["Meticulous", "Punctilious", "Scrupulous"] },
+            { word: "Veracity", phonetic: "/vəˈræs.ə.ti/", category: "Literary", definition: "Conformity to facts; accuracy and truthfulness.", example: "The lawyer questioned the veracity of the witness statement.", synonyms: ["Truthfulness", "Accuracy", "Integrity"] },
+            { word: "Magnanimous", phonetic: "/mæɡˈnæn.ɪ.məs/", category: "Character", definition: "Generous or forgiving, especially toward a rival or less powerful person.", example: "He was magnanimous in defeat, congratulating his opponent warmly.", synonyms: ["Generous", "Charitable", "Noble"] },
+            { word: "Perspicacious", phonetic: "/ˌpɜː.spɪˈkeɪ.ʃəs/", category: "Intellectual", definition: "Having ready insight into things; mentally sharp.", example: "The perspicacious trader identified the market reversal early.", synonyms: ["Shrewd", "Perceptive", "Acutely aware"] },
+            { word: "Ebullient", phonetic: "/ɪˈbʊl.i.ənt/", category: "Energy", definition: "Cheerful and full of energy; overflowing with enthusiasm.", example: "Her ebullient personality lit up the entire room.", synonyms: ["Exuberant", "Buoyant", "Vivacious"] }
+        ];
+
+        let currentWord = lexiconDB[0];
+        let savedWords = JSON.parse(localStorage.getItem('lexicon_saved')) || [];
+        let streak = parseInt(localStorage.getItem('lexicon_streak')) || 1;
+        let quizScore = 0;
+
+        document.getElementById('streakCount').innerText = streak;
+
+        function displayWord(w) {
+            currentWord = w;
+            document.getElementById('wordTitle').innerText = w.word;
+            document.getElementById('wordPhonetic').innerText = w.phonetic;
+            document.getElementById('wordCategory').innerText = w.category;
+            document.getElementById('wordDefinition').innerText = w.definition;
+            document.getElementById('wordExample').innerText = `"${w.example}"`;
+            
+            const synContainer = document.getElementById('wordSynonyms');
+            synContainer.innerHTML = w.synonyms.map(s => `<span class="text-[11px] bg-zinc-800/80 border border-zinc-700/50 text-zinc-300 px-2.5 py-0.5 rounded-md font-medium">${s}</span>`).join('');
+
+            updateSaveButtonState();
+        }
+
+        function loadRandomWord() {
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * lexiconDB.length);
+            } while (lexiconDB[randomIndex].word === currentWord.word && lexiconDB.length > 1);
+
+            displayWord(lexiconDB[randomIndex]);
+        }
+
+        function speakWord() {
+            const utterance = new SpeechSynthesisUtterance(currentWord.word);
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function toggleSave() {
+            const existsIndex = savedWords.findIndex(item => item.word === currentWord.word);
+            if (existsIndex > -1) {
+                savedWords.splice(existsIndex, 1);
+            } else {
+                savedWords.push(currentWord);
+            }
+            localStorage.setItem('lexicon_saved', JSON.stringify(savedWords));
+            updateSaveButtonState();
+            renderSavedList();
+        }
+
+        function updateSaveButtonState() {
+            const isSaved = savedWords.some(item => item.word === currentWord.word);
+            document.getElementById('saveBtn').innerHTML = isSaved ? '❤️' : '🤍';
+        }
+
+        function renderSavedList() {
+            const list = document.getElementById('savedList');
+            if (savedWords.length === 0) {
+                list.innerHTML = `<p class="text-zinc-500 text-xs text-center py-12">No saved words yet.<br>Tap the heart icon on any word to build your bank!</p>`;
+                return;
+            }
+            list.innerHTML = savedWords.map(w => `
+                <div class="bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl flex justify-between items-center shadow-md">
+                    <div>
+                        <h3 class="font-bold text-white text-xs">${w.word} <span class="text-[11px] font-normal text-purple-400 ml-1">${w.phonetic}</span></h3>
+                        <p class="text-[11px] text-zinc-400 mt-0.5">${w.definition}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function shareWord() {
+            const text = `Word: *${currentWord.word}* (${currentWord.phonetic})\nDefinition: ${currentWord.definition}\nExample: "${currentWord.example}"`;
+            if (navigator.share) {
+                navigator.share({ title: 'Lexicon Daily', text: text });
+            } else {
+                navigator.clipboard.writeText(text);
+                alert('Word copied to clipboard!');
+            }
+        }
+
+        function switchTab(tab) {
+            const homeTab = document.getElementById('tabHome');
+            const quizTab = document.getElementById('tabQuiz');
+            const savedTab = document.getElementById('tabSaved');
+            
+            const navHome = document.getElementById('navHome');
+            const navQuiz = document.getElementById('navQuiz');
+            const navSaved = document.getElementById('navSaved');
+
+            homeTab.classList.add('hidden');
+            quizTab.classList.add('hidden');
+            savedTab.classList.add('hidden');
+            
+            navHome.className = "px-3 py-1.5 rounded-lg text-zinc-400 hover:text-white text-xs transition";
+            navQuiz.className = "px-3 py-1.5 rounded-lg text-zinc-400 hover:text-white text-xs transition";
+            navSaved.className = "px-3 py-1.5 rounded-lg text-zinc-400 hover:text-white text-xs transition";
+
+            if (tab === 'home') {
+                homeTab.classList.remove('hidden');
+                navHome.className = "px-3 py-1.5 rounded-lg bg-purple-600 text-white font-medium text-xs transition shadow-lg shadow-purple-600/20";
+            } else if (tab === 'quiz') {
+                quizTab.classList.remove('hidden');
+                navQuiz.className = "px-3 py-1.5 rounded-lg bg-purple-600 text-white font-medium text-xs transition shadow-lg shadow-purple-600/20";
+                loadQuiz();
+            } else {
+                savedTab.classList.remove('hidden');
+                navSaved.className = "px-3 py-1.5 rounded-lg bg-purple-600 text-white font-medium text-xs transition shadow-lg shadow-purple-600/20";
+                renderSavedList();
+            }
+        }
+
+        function loadQuiz() {
+            const qObj = lexiconDB[Math.floor(Math.random() * lexiconDB.length)];
+            document.getElementById('quizQuestion').innerText = `What is the definition of "${qObj.word}"?`;
+            
+            let options = [qObj.definition];
+            while(options.length < 3) {
+                let randDef = lexiconDB[Math.floor(Math.random() * lexiconDB.length)].definition;
+                if(!options.includes(randDef)) options.push(randDef);
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            const optContainer = document.getElementById('quizOptions');
+            const feedback = document.getElementById('quizFeedback');
+            feedback.classList.add('hidden');
+            document.getElementById('nextQuizBtn').classList.add('hidden');
+
+            optContainer.innerHTML = options.map(opt => `
+                <button onclick="checkAnswer('${opt.replace(/'/g, "\\'")}', '${qObj.definition.replace(/'/g, "\\'")}', this)" class="w-full text-left bg-zinc-950/80 border border-zinc-800 hover:border-purple-500/50 p-3 rounded-xl text-xs text-zinc-300 transition shadow-inner">
+                    ${opt}
+                </button>
+            `).join('');
+        }
+
+        function checkAnswer(selected, correct, btn) {
+            const feedback = document.getElementById('quizFeedback');
+            feedback.classList.remove('hidden');
+            
+            if (selected === correct) {
+                btn.className = "w-full text-left bg-purple-950/40 border border-purple-500 p-3 rounded-xl text-xs text-purple-200 shadow-md font-medium";
+                feedback.innerText = "✨ Correct! Spot on.";
+                feedback.className = "mt-4 p-3 rounded-xl text-xs font-semibold text-center bg-purple-500/10 text-purple-300 border border-purple-500/20";
+                quizScore += 10;
+            } else {
+                btn.className = "w-full text-left bg-red-950/40 border border-red-500/50 p-3 rounded-xl text-xs text-red-200 shadow-md";
+                feedback.innerText = `❌ Incorrect. Correct definition: "${correct}"`;
+                feedback.className = "mt-4 p-3 rounded-xl text-xs font-semibold text-center bg-red-500/10 text-red-300 border border-red-500/20";
+            }
+            
+            document.getElementById('quizScore').innerText = `Score: ${quizScore}`;
+            document.getElementById('nextQuizBtn').classList.remove('hidden');
+        }
+
+        document.getElementById('nextQuizBtn').onclick = loadQuiz;
+
+        // Initialize App
+        displayWord(currentWord);
+    </script>
+</body>
+</html>
